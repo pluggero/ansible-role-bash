@@ -1,0 +1,139 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+
+  vars_files:
+    - ../../defaults/main.yml
+    - ../../vars/molecule.yml
+
+  vars:
+    ansible_user: ansible
+    ansible_become_password: ansible
+
+  tasks:
+    - name: Get bash binary path
+      ansible.builtin.command:
+        cmd: which bash
+      register: bash_which
+      changed_when: false
+
+    - name: Assert bash binary exists
+      ansible.builtin.assert:
+        that:
+          - bash_which.rc == 0
+        fail_msg: "bash binary not found via 'which bash'"
+
+    - name: Get bash version
+      ansible.builtin.command:
+        cmd: bash --version
+      register: bash_version_output
+      changed_when: false
+
+    - name: Assert bash version output contains GNU bash
+      ansible.builtin.assert:
+        that:
+          - "'GNU bash' in bash_version_output.stdout"
+        fail_msg: "bash --version did not output 'GNU bash'"
+
+    - name: Check ~/.bashrc exists
+      ansible.builtin.stat:
+        path: "{{ bash_config_dir }}/.bashrc"
+      register: bashrc_stat
+      when: bash_enable_bashrc
+
+    - name: Assert ~/.bashrc exists and has correct mode
+      ansible.builtin.assert:
+        that:
+          - bashrc_stat.stat.exists
+          - bashrc_stat.stat.mode == "0644"
+        fail_msg: "~/.bashrc not found or wrong permissions"
+      when: bash_enable_bashrc
+
+    - name: Check ~/.bash_profile exists
+      ansible.builtin.stat:
+        path: "{{ bash_config_dir }}/.bash_profile"
+      register: bash_profile_stat
+      when: bash_enable_bash_profile
+
+    - name: Assert ~/.bash_profile exists and has correct mode
+      ansible.builtin.assert:
+        that:
+          - bash_profile_stat.stat.exists
+          - bash_profile_stat.stat.mode == "0644"
+        fail_msg: "~/.bash_profile not found or wrong permissions"
+      when: bash_enable_bash_profile
+
+    - name: Check ~/.bash_aliases exists
+      ansible.builtin.stat:
+        path: "{{ bash_config_dir }}/.bash_aliases"
+      register: bash_aliases_stat
+      when: bash_enable_aliases
+
+    - name: Assert ~/.bash_aliases exists and has correct mode
+      ansible.builtin.assert:
+        that:
+          - bash_aliases_stat.stat.exists
+          - bash_aliases_stat.stat.mode == "0644"
+        fail_msg: "~/.bash_aliases not found or wrong permissions"
+      when: bash_enable_aliases
+
+    - name: Read ~/.bash_aliases content
+      ansible.builtin.slurp:
+        src: "{{ bash_config_dir }}/.bash_aliases"
+      register: bash_aliases_content
+      when: bash_enable_aliases
+
+    - name: Assert test alias is present in ~/.bash_aliases
+      ansible.builtin.assert:
+        that:
+          - "'alias test_alias=' in (bash_aliases_content.content | b64decode)"
+        fail_msg: "test_alias not found in ~/.bash_aliases"
+      when: bash_enable_aliases
+
+    - name: Check ~/.bash_functions exists
+      ansible.builtin.stat:
+        path: "{{ bash_config_dir }}/.bash_functions"
+      register: bash_functions_stat
+      when: bash_enable_functions
+
+    - name: Assert ~/.bash_functions exists and has correct mode
+      ansible.builtin.assert:
+        that:
+          - bash_functions_stat.stat.exists
+          - bash_functions_stat.stat.mode == "0644"
+        fail_msg: "~/.bash_functions not found or wrong permissions"
+      when: bash_enable_functions
+
+    - name: Read ~/.bash_functions content
+      ansible.builtin.slurp:
+        src: "{{ bash_config_dir }}/.bash_functions"
+      register: bash_functions_content
+      when: bash_enable_functions
+
+    - name: Assert test function is present in ~/.bash_functions
+      ansible.builtin.assert:
+        that:
+          - "'test_func()' in (bash_functions_content.content | b64decode)"
+        fail_msg: "test_func not found in ~/.bash_functions"
+      when: bash_enable_functions
+
+    - name: Read ~/.bashrc content
+      ansible.builtin.slurp:
+        src: "{{ bash_config_dir }}/.bashrc"
+      register: bashrc_content
+      when: bash_enable_bashrc
+
+    - name: Assert HISTSIZE is configured in ~/.bashrc
+      ansible.builtin.assert:
+        that:
+          - "'HISTSIZE=' in (bashrc_content.content | b64decode)"
+        fail_msg: "HISTSIZE not found in ~/.bashrc"
+      when: bash_enable_bashrc
+
+    - name: Assert TEST_VAR env var is configured in ~/.bashrc
+      ansible.builtin.assert:
+        that:
+          - "'TEST_VAR' in (bashrc_content.content | b64decode)"
+        fail_msg: "TEST_VAR not found in ~/.bashrc"
+      when: bash_enable_bashrc

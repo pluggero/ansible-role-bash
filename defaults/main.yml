@@ -1,0 +1,52 @@
+---
+# Installation
+bash_install_method: "package"
+
+# Paths
+bash_config_dir: "{{ ansible_env.HOME }}"
+
+# Feature flags — control which config files are managed
+bash_enable_bashrc: true
+bash_enable_bash_profile: true
+bash_enable_aliases: true
+bash_enable_functions: true
+
+# History settings
+bash_enable_history: false
+bash_histsize: 10000
+bash_histfilesize: 20000
+
+# Aliases — list of {name, command} dicts
+bash_aliases: []
+# - name: ll
+#   command: "ls -lah"
+# - name: la
+#   command: "ls -A"
+
+# Functions — list of {name, body} dicts; body is a multiline string
+bash_functions: []
+# - name: mkcd
+#   body: |
+#     mkdir -p "$1" && cd "$1"
+
+# Login shell commands — only executed in bash login shells
+bash_login_shell_commands: []
+# - "export PATH=$HOME/.local/bin:$PATH"
+
+# Environment variables — dict of VAR_NAME: value
+bash_env_vars: {}
+# EDITOR: nvim
+# PAGER: less
+
+# PATH additions — list of paths to prepend to PATH (dedup-safe)
+bash_path_additions: []
+# - "{{ ansible_env.HOME }}/.local/bin"
+# - "{{ ansible_env.HOME }}/bin"
+
+# Extra lines appended verbatim to ~/.bashrc
+bash_extra_config: []
+# - "eval \"$(zoxide init bash)\""
+
+# Extra files to source in ~/.bashrc
+bash_source_files: []
+# - "{{ ansible_env.HOME }}/.env_vars"

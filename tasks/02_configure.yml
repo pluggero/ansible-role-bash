@@ -1,0 +1,42 @@
+---
+- name: Configure bash
+  block:
+    - name: Deploy ~/.bashrc
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/bashrc.j2"
+        dest: "{{ bash_config_dir }}/.bashrc"
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        backup: true
+      when: bash_enable_bashrc
+
+    - name: Deploy ~/.bash_profile
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/bash_profile.j2"
+        dest: "{{ bash_config_dir }}/.bash_profile"
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        backup: true
+      when: bash_enable_bash_profile
+
+    - name: Deploy ~/.bash_aliases
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/bash_aliases.j2"
+        dest: "{{ bash_config_dir }}/.bash_aliases"
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        backup: true
+      when: bash_enable_aliases
+
+    - name: Deploy ~/.bash_functions
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/bash_functions.j2"
+        dest: "{{ bash_config_dir }}/.bash_functions"
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        backup: true
+      when: bash_enable_functions

@@ -1,0 +1,23 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: bash
+  namespace: pluggero
+  author: pluggero
+  description: Installs bash and manages shell configuration on various Linux systems.
+  company: Pluggramming
+  license: license (MIT)
+  min_ansible_version: "2.10"
+  platforms:
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - bookworm
+  galaxy_tags:
+    - bash
+    - shell
+    - dotfiles
+    - configuration

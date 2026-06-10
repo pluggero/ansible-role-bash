@@ -1,0 +1,6 @@
+---
+bash_dep_pkgs: []
+
+bash_distro_pkgs:
+  - bash
+  - bash-completion

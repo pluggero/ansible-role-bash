@@ -1,0 +1,9 @@
+# Managed by Ansible — do not edit manually
+{% if bash_functions %}
+
+# Shell functions
+{% for function in bash_functions %}
+{{ function.name }}() {
+{{ function.body | indent(4, first=True) }}}
+{% endfor %}
+{% endif %}

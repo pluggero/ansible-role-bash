@@ -1,0 +1,69 @@
+# Managed by Ansible — do not edit manually
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+{% if bash_enable_history %}
+# History settings
+HISTSIZE={{ bash_histsize }}
+HISTFILESIZE={{ bash_histfilesize }}
+HISTCONTROL=ignoreboth
+shopt -s histappend
+
+{% endif %}
+# Window size check after each command
+shopt -s checkwinsize
+
+# Enable ** glob pattern
+shopt -s globstar
+
+{% if bash_env_vars %}
+# Environment variables
+{% for var_name, var_value in bash_env_vars.items() %}
+export {{ var_name }}="{{ var_value }}"
+{% endfor %}
+
+{% endif %}
+{% if bash_path_additions %}
+# PATH additions (dedup-safe)
+{% for path_entry in bash_path_additions %}
+case ":${PATH}:" in
+    *":{{ path_entry }}:"*) ;;
+    *) export PATH="{{ path_entry }}:${PATH}" ;;
+esac
+{% endfor %}
+
+{% endif %}
+{% if bash_source_files %}
+# Source additional files
+{% for source_file in bash_source_files %}
+[ -f "{{ source_file }}" ] && source "{{ source_file }}"
+{% endfor %}
+
+{% endif %}
+# Source aliases if managed
+{% if bash_enable_aliases %}
+[ -f "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
+{% endif %}
+
+# Source functions if managed
+{% if bash_enable_functions %}
+[ -f "${HOME}/.bash_functions" ] && source "${HOME}/.bash_functions"
+{% endif %}
+
+# bash-completion
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+    source /usr/share/bash-completion/bash_completion
+elif [ -f /etc/bash_completion ]; then
+    source /etc/bash_completion
+fi
+{% if bash_extra_config %}
+
+# Extra configuration
+{% for line in bash_extra_config %}
+{{ line }}
+{% endfor %}
+{% endif %}

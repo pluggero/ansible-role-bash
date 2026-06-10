@@ -1,0 +1,22 @@
+# Managed by Ansible — do not edit manually
+
+# Source ~/.bashrc if it exists (brings interactive settings into login shells)
+[ -f "${HOME}/.bashrc" ] && source "${HOME}/.bashrc"
+
+# Add ~/bin and ~/.local/bin to PATH if they exist and aren't already in PATH
+for _dir in "${HOME}/bin" "${HOME}/.local/bin"; do
+    if [ -d "$_dir" ]; then
+        case ":${PATH}:" in
+            *":${_dir}:"*) ;;
+            *) export PATH="${_dir}:${PATH}" ;;
+        esac
+    fi
+done
+unset _dir
+{% if bash_login_shell_commands %}
+
+# Login shell commands
+{% for command in bash_login_shell_commands %}
+{{ command }}
+{% endfor %}
+{% endif %}

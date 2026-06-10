@@ -1,0 +1,35 @@
+---
+# Molecule test variables — override defaults for comprehensive testing
+
+bash_enable_bashrc: true
+bash_enable_bash_profile: true
+bash_enable_aliases: true
+bash_enable_functions: true
+bash_enable_history: true
+
+bash_histsize: 5000
+bash_histfilesize: 10000
+
+bash_env_vars:
+  TEST_VAR: "molecule_test"
+  EDITOR: "vim"
+
+bash_aliases:
+  - name: test_alias
+    command: "echo alias_test"
+  - name: ll
+    command: "ls -lah"
+
+bash_functions:
+  - name: test_func
+    body: |
+      echo "test function called"
+
+bash_path_additions:
+  - "/opt/test/bin"
+
+bash_login_shell_commands:
+  - "# login shell test"
+
+bash_extra_config:
+  - "# extra config test line"
