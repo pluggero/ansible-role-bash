@@ -64,6 +64,36 @@
         fail_msg: "~/.bash_profile not found or wrong permissions"
       when: bash_enable_bash_profile
 
+    - name: Read ~/.bash_profile content
+      ansible.builtin.slurp:
+        src: "{{ bash_config_dir }}/.bash_profile"
+      register: bash_profile_content
+      when: bash_enable_bash_profile
+
+    - name: Assert interactive guard is present in ~/.bash_profile
+      ansible.builtin.assert:
+        that:
+          - "'[[ $- == *i* ]]' in (bash_profile_content.content | b64decode)"
+        fail_msg: "Interactive guard not found in ~/.bash_profile — login shell commands would fire for non-interactive sessions"
+      when:
+        - bash_enable_bash_profile
+        - bash_login_shell_commands | length > 0
+
+    - name: Run non-interactive login shell
+      ansible.builtin.command:
+        cmd: bash -l -c 'echo OK'
+      register: non_interactive_shell
+      changed_when: false
+      when: bash_enable_bash_profile
+
+    - name: Assert non-interactive login shell exits successfully
+      ansible.builtin.assert:
+        that:
+          - non_interactive_shell.rc == 0
+          - "'OK' in non_interactive_shell.stdout"
+        fail_msg: "Non-interactive login shell failed — likely caused by unconditional exec in .bash_profile"
+      when: bash_enable_bash_profile
+
     - name: Check ~/.bash_aliases exists
       ansible.builtin.stat:
         path: "{{ bash_config_dir }}/.bash_aliases"
