@@ -84,7 +84,7 @@ bash_login_shell_commands: []
 # - "exec sway"
 ```
 
-List of commands to include in `~/.bash_profile` (login-shell only).
+List of commands to include in `~/.bash_profile`. Commands are wrapped in an `if [[ $- == *i* ]]; then ... fi` guard so they only execute in **interactive** login shells. Non-interactive login shells (e.g. `bash -l -c '...'`) are unaffected.
 
 ```yaml
 bash_extra_config: []

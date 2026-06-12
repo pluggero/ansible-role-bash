@@ -15,8 +15,10 @@ done
 unset _dir
 {% if bash_login_shell_commands %}
 
-# Login shell commands
+# Login shell commands — only run in interactive login shells
+if [[ $- == *i* ]]; then
 {% for command in bash_login_shell_commands %}
-{{ command }}
+    {{ command }}
 {% endfor %}
+fi
 {% endif %}

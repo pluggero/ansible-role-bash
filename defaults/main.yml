@@ -29,7 +29,7 @@ bash_functions: []
 #   body: |
 #     mkdir -p "$1" && cd "$1"
 
-# Login shell commands — only executed in bash login shells
+# Login shell commands — only executed on interactive bash login shells
 bash_login_shell_commands: []
 # - "export PATH=$HOME/.local/bin:$PATH"
 
